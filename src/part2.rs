@@ -25,21 +25,38 @@ use std::io::Read;
 // split_ref must have the return type Vec<&str>
 // split_clone must have the return type Vec<String>
 
-// #[test]
-// fn test_split_ref(){
-//     let string = "Hello World!".to_string();
-//     assert_eq!(split_ref(& string), ["Hello", "World!"]);
-//     assert_eq!(split_ref("Hello World!"), & ["Hello", "World!"]);
-//     assert_eq!(split_ref("Hello World!"), vec!["Hello", "World!"]);
-// }
+fn split_ref(v :&str) -> Vec<&str> {
+    let mut ret: Vec<&str> = vec![];
+    for slice in v.split(" ") {
+        ret.push(slice);
+    }
+    return ret;
+}
 
-// #[test]
-// fn test_split_clone(){
-//     let string = "Hello World!".to_string();
-//     assert_eq!(split_clone(& string), ["Hello", "World!"]);
-//     assert_eq!(split_clone("Hello World!"), & ["Hello", "World!"]);
-//     assert_eq!(split_clone("Hello World!"), vec!["Hello", "World!"]);
-// }
+
+fn split_clone(v :&str) -> Vec<String> {
+    let mut ret: Vec<String> = vec![];
+    for slice in v.split(" ") {
+        ret.push(slice.to_owned());
+    }
+    return ret;
+}
+
+#[test]
+fn test_split_ref(){
+    let string = "Hello World!".to_string();
+    assert_eq!(split_ref(& string), ["Hello", "World!"]);
+    assert_eq!(split_ref("Hello World!"), & ["Hello", "World!"]);
+    assert_eq!(split_ref("Hello World!"), vec!["Hello", "World!"]);
+}
+
+#[test]
+fn test_split_clone(){
+    let string = "Hello World!".to_string();
+    assert_eq!(split_clone(& string), ["Hello", "World!"]);
+    assert_eq!(split_clone("Hello World!"), & ["Hello", "World!"]);
+    assert_eq!(split_clone("Hello World!"), vec!["Hello", "World!"]);
+}
 
 /*
     Problem 2: Longest string
@@ -48,14 +65,20 @@ use std::io::Read;
     Taking &str arguments makes it more general than taking Strings.
     Return a new String (we will see later how to return a &str.)
 */
+fn pick_longest(v1 : &str, v2: &str) -> String{
+    if v2.len() > v1.len() {
+        return v2.to_owned();
+    }
+    return v1.to_owned();
+}
 
-// #[test]
-// fn test_pick_longest {
-//     assert_eq!(
-//         pick_longest(& "cat".to_string(), & "dog".to_string()),
-//         "cat".to_string()
-//     );
-// }
+#[test]
+fn test_pick_longest() {
+    assert_eq!(
+        pick_longest(& "cat".to_string(), & "dog".to_string()),
+        "cat".to_string()
+    );
+}
 
 // Question 1:
 // For the curious, attempt to return reference, that is:
@@ -64,6 +87,8 @@ use std::io::Read;
 //
 // What goes wrong when you try to implement this function? Why is this
 // the case?
+//
+// Un-specified life span
 
 /*
     Problem 3: File to string
@@ -79,9 +104,9 @@ use std::io::Read;
     and read_to_string. We will discuss error handling later.
 */
 
-pub fn file_to_string(path: &str) -> String {
-    unimplemented!()
-}
+//pub fn file_to_string(path: &str) -> String {
+
+//}
 
 /*
     Problem 4: Mutability
@@ -99,7 +124,7 @@ fn test_add1() {
 }
 
 pub fn add1(mut x : i32) -> () {
-    x += 1;
+    x = x + 1;
 }
 
 /*

@@ -9,8 +9,6 @@
 
 // Remove these once you are done editing the file!
 // This will result in useful warnings if you missed something.
-#![allow(dead_code)]
-#![allow(unused_variables)]
 
 /*
     Problem 1: Double
@@ -24,16 +22,16 @@
 */
 
 pub fn double_v1(n: i32) -> i32 {
-    unimplemented!()
+    return n*2;
 }
 
 pub fn double_v2(n: &i32) -> i32 {
-    unimplemented!()
+    return n*2;
 }
 
 pub fn double_v3(n: &mut i32) {
     // double n in place
-    unimplemented!()
+    *n = *n * 2;
 }
 
 // Example unit test (so you can recall the syntax)
@@ -42,12 +40,20 @@ fn test_double_v1() {
     assert_eq!(double_v1(2), 4);
     assert_eq!(double_v1(-3), -6);
 }
-// #[test]
-// fn test_double_v2() {
-// }
-// #[test]
-// fn test_double_v3() {
-// }
+#[test]
+fn test_double_v2() {
+    assert_eq!(double_v2(&2), 4);
+    assert_eq!(double_v2(&-3), -6);
+}
+#[test]
+fn test_double_v3() {
+    let mut a:i32 = 2;
+    let mut b:i32 = -3;
+    double_v3(&mut a);
+    double_v3(&mut b);
+    assert_eq!(a, 4);
+    assert_eq!(b, -6);
+}
 
 /*
     Problem 2: Integer square root
@@ -57,10 +63,19 @@ fn test_double_v1() {
     efficiently than trying every possibility.
 */
 pub fn sqrt(n: usize) -> usize {
-    unimplemented!()
+    for m in 0..n {
+        if m*m == n {
+            return m;
+        }
+    }
+    panic!("no sqaure root found");
 }
 
 // Remember to write unit tests here (and on all future functions)
+#[test]
+fn test_sqrt() {
+    assert_eq!(sqrt(4), 2);
+}
 
 /*
     Problem 3: Slice sum
@@ -74,19 +89,19 @@ pub fn sqrt(n: usize) -> usize {
     Which of the two ways do you prefer?
 */
 pub fn sum_v1(slice: &[i32]) -> i32 {
-    // do some initialization...
+    let mut sum: i32 = 0;
     for &v in slice {
-        // ...
+        sum += v;
     }
-    unimplemented!()
+    return sum;
 }
 
 pub fn sum_v2(slice: &[i32]) -> i32 {
-    // do some initialization...
+    let mut sum: i32 = 0;
     for v in slice {
-        // ...
+        sum += v;
     }
-    unimplemented!()
+    return sum;
 }
 
 /*
@@ -98,7 +113,18 @@ pub fn sum_v2(slice: &[i32]) -> i32 {
 */
 
 pub fn unique(slice: &[i32]) -> Vec<i32> {
-    unimplemented!()
+    let mut unique_vec: Vec<i32> = vec![];
+    for v in slice.iter() {
+        if !unique_vec.contains(v) {
+            unique_vec.push(*v);
+        }
+    }
+    return unique_vec;
+}
+
+#[test]
+fn test_unique() {
+    assert_eq!(unique(&[1, 2, 3, 3, 2]), vec![1, 2, 3]);
 }
 
 /*
@@ -109,7 +135,13 @@ pub fn unique(slice: &[i32]) -> Vec<i32> {
     to know is that pred is a function from i32 to bool.
 */
 pub fn filter(slice: &[i32], pred: impl Fn(i32) -> bool) -> Vec<i32> {
-    unimplemented!()
+    let mut unique_vec: Vec<i32> = vec![];
+    for &v in slice.iter() {
+        if pred(v) {
+            unique_vec.push(v);
+        }
+    }
+    return unique_vec;
 }
 
 #[test]
@@ -128,7 +160,28 @@ fn test_filter() {
     where v[i] is the ith fibonacci number.
 */
 pub fn fibonacci(n1: i32, n2: i32, out_size: usize) -> Vec<i32> {
-    unimplemented!()
+    if out_size == 0 {
+        return vec![];
+    }
+
+    if out_size == 1 {
+        return vec![n1];
+    }
+
+    if out_size == 2 {
+        return vec![n1, n2];
+    }
+
+    return [n1].iter().chain(
+            &fibonacci(n2, n1+n2, out_size - 1)
+        ).map(|&x|x).collect();
+}
+
+#[test]
+fn fibonacci_test() {
+    assert_eq!(fibonacci(1, 1, 0), []);
+    assert_eq!(fibonacci(0, 0, 5), [0, 0, 0, 0, 0]);
+    assert_eq!(fibonacci(1, 1, 10), [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]);
 }
 
 /*
@@ -142,11 +195,23 @@ pub fn fibonacci(n1: i32, n2: i32, out_size: usize) -> Vec<i32> {
     What are some reasons the second function is not efficient?
 */
 pub fn str_concat(s1: &str, s2: &str) -> String {
-    unimplemented!()
+    return s1.to_owned() + s2;
 }
 
 pub fn string_concat(s1: String, s2: String) -> String {
-    unimplemented!()
+    return s1.to_owned() + &s2;
+}
+
+#[test]
+fn str_concat_test() {
+    assert_eq!(str_concat("1", "2"), "12");
+    assert_eq!(str_concat("abcd", "efgh"), "abcdefgh");
+}
+
+#[test]
+fn string_concat_test() {
+    assert_eq!(string_concat("1".to_owned(), "2".to_owned()), "12");
+    assert_eq!(string_concat("abcd".to_owned(), "efgh".to_owned()), "abcdefgh");
 }
 
 /*
@@ -157,7 +222,18 @@ pub fn string_concat(s1: String, s2: String) -> String {
 */
 
 pub fn concat_all(v: Vec<String>) -> String {
-    unimplemented!()
+    let mut ret = "".to_owned();
+    for s in v {
+        ret += &s;
+    }
+    return ret;
+}
+
+#[test]
+fn concat_all_test() {
+    assert_eq!(concat_all(
+        vec!["1".to_owned(), "23".to_owned(), "456".to_owned()]
+    ), "123456");
 }
 
 /*
@@ -175,11 +251,19 @@ pub fn concat_all(v: Vec<String>) -> String {
 */
 
 pub fn parse_all(v: Vec<String>) -> Vec<i32> {
-    unimplemented!()
+    let mut ret: Vec<i32> = vec![];
+    for s in v {
+        ret.push(s.parse().unwrap());
+    }
+    return ret;
 }
 
 pub fn print_all(v: Vec<i32>) -> Vec<String> {
-    unimplemented!()
+    let mut ret: Vec<String> = vec![];
+    for s in v {
+        ret.push(s.to_string());
+    }
+    return ret;
 }
 
 #[test]
@@ -206,7 +290,10 @@ fn test_parse_print() {
 */
 
 pub fn concat_even_fibonaccis(n: usize) -> String {
-    unimplemented!()
+    let fib = fibonacci(1, 1, n);
+    let fib_even = filter(&fib, |x|x%2==0);
+    let fib_even_string = print_all(fib_even);
+    return concat_all(fib_even_string);
 }
 
 #[test]
